@@ -20,19 +20,25 @@ use tauri::{
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::new()
-                .level(log::LevelFilter::Debug) // 可调整为 Info 或 Warn
+                .level(log::LevelFilter::Debug)
                 .build(),
         )
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_android_fs::init())
-        .plugin(tauri_plugin_os::init()) // 注册 OS 插件，提供平台检测能力
-        .plugin(tauri_plugin_notification::init()) // 注册通知插件，支持下载完成系统通知
-        .plugin(tauri_plugin_safe_area_insets_css_edge::init()) // 注册安全区域插件
+        .plugin(tauri_plugin_os::init())
+        .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_safe_area_insets_css_edge::init());
+
+    #[cfg(target_os = "android")]
+    {
+        builder = builder.plugin(tauri_plugin_android_fs::init());
+    }
+
+    builder
         .setup(|app| {
             store_wrapper::initialize(app.handle())?;
             // 下载器启动前先恢复持久化任务；后续下载事件才能更新权威任务状态。

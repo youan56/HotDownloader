@@ -1,3 +1,5 @@
+原因就是大佬他们编译的软件在我的 mac 上运行不了我自己又重新编译了一下 方便自己使用并且有地方放代码
+
 # 🎵 HotDownloader
 
 > 基于共享 Rust 下载核心和 Vue 3 的音乐下载工具，支持 Tauri 桌面端、Android 端与 Docker/Web 部署。
